@@ -1,140 +1,116 @@
 package FOP_Team_Project;
-import java.util.*;
-public class Main {
-    public static void main(String[] args) {
-        //Lexer-simple-model;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
+class Main {
+    private Map<String, Object> variables;
 
-        enum TokenType {
-            NUMBER, IDENTIFIER, ASSIGN, FOR, LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, EOF
+    public Main() {
+        variables = new HashMap<>();
+    }
+
+    public void assignVariable(String varName, Object value) {
+        variables.put(varName, value);
+    }
+
+    public Object getVariableValue(String varName) {
+        return variables.getOrDefault(varName, null); // Default to null if variable not found
+    }
+
+    public Object evaluateExpression(String expression) {
+        // Check for empty input
+        if (expression.trim().isEmpty()) {
+            return null; // Do nothing for empty input
         }
 
-        class Token {
-            TokenType type;
-            String value;
-
-            Token(TokenType type, String value) {
-                this.type = type;
-                this.value = value;
-            }
+        // Check for print command
+        if (expression.startsWith("print(") && expression.endsWith(")")) {
+            String varName = expression.substring(6, expression.length() - 1).trim();
+            return Methods.printVariable(varName, variables); // Use the print method from Methods class
         }
 
-        class Lexer {
-            private String text;
-            private int pos = 0;
-            private char currentChar;
+        // Check for variable assignment
+        if (expression.contains("=")) {
+            String[] parts = expression.split("=");
+            String varName = parts[0].trim();
+            Object value = evaluateExpression(parts[1].trim());
+            assignVariable(varName, value);
+            return null; // Do not return anything for assignments
+        }
 
-            public Lexer(String text) {
-                this.text = text;
-                this.currentChar = text.charAt(pos);
-            }
+        // Check for addition
+        if (expression.contains("+")) {
+            String[] parts = expression.split("\\+");
+            Object left = getValue(parts[0].trim());
+            Object right = getValue(parts[1].trim());
+            return addValues(left, right);
+        }
 
-            private void error() {
-                throw new RuntimeException("Invalid character");
-            }
+        // If it's just a number or variable, return its value
+        return getValue(expression.trim());
+    }
 
-            private void advance() {
-                pos++;
-                if (pos > text.length() - 1) {
-                    currentChar = '\0'; // Indicates end of input
+    private Object getValue(String token) {
+        // Check if the token is a variable
+        if (variables.containsKey(token)) {
+            return getVariableValue(token);
+        }
+        // Try to parse as Integer
+        try {
+            return Integer.parseInt(token);
+        } catch (NumberFormatException e1) {
+            // Try to parse as Float
+            try {
+                return Float.parseFloat(token);
+            } catch (NumberFormatException e2) {
+                // Check if the token is a string (must be in quotes)
+                if (token.startsWith("\"") && token.endsWith("\"")) {
+                    return token.substring(1, token.length() - 1); // Remove quotes
                 } else {
-                    currentChar = text.charAt(pos);
+                    // Throw an error if the token is not a valid string
+                    throw new RuntimeException("String values must be enclosed in double quotes.");
                 }
             }
+        }
+    }
 
-            private void skipWhitespace() {
-                while (pos < text.length() && Character.isWhitespace(currentChar)) {
-                    advance();
+    private Object addValues(Object left, Object right) {
+        if (left instanceof Integer && right instanceof Integer) {
+            return (Integer) left + (Integer) right;
+        } else if (left instanceof Float && right instanceof Float) {
+            return (Float) left + (Float) right;
+        } else if (left instanceof Integer && right instanceof Float) {
+            return (Integer) left + (Float) right;
+        } else if (left instanceof Float && right instanceof Integer) {
+            return (Float) left + (Integer) right;
+        } else {
+            throw new RuntimeException("Unsupported operation for types: " + left.getClass() + " and " + right.getClass());
+        }
+    }
+
+    public static void main(String[] args) {
+        Main interpreter = new Main();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Simple Interpreter. Type 'exit' to quit.");
+        while (true) {
+            System.out.print("> ");
+            String command = scanner.nextLine();
+            if (command.equalsIgnoreCase("exit")) {
+                break;
+            }
+            try {
+                Object result = interpreter.evaluateExpression(command);
+                if (result != null) {
+                    System.out.println(result); // Only print results that are not null
                 }
-            }
-
-            public Token getNextToken() {
-                while (currentChar != '\0') {
-                    if (Character.isWhitespace(currentChar)) {
-                        skipWhitespace();
-                        continue;
-                    }
-
-                    if (Character.isDigit(currentChar)) {
-                        return new Token(TokenType.NUMBER, String.valueOf(currentChar));
-                    }
-
-                    if (Character.isLetter(currentChar)) {
-                        StringBuilder identifier = new StringBuilder();
-                        while (Character.isLetter(currentChar)) {
-                            identifier.append(currentChar);
-                            advance();
-                        }
-                        String id = identifier.toString();
-                        if (id.equals("for")) {
-                            return new Token(TokenType.FOR, id);
-                        }
-                        return new Token(TokenType.IDENTIFIER, id);
-                    }
-
-                    if (currentChar == '=') {
-                        advance();
-                        return new Token(TokenType.ASSIGN, "=");
-                    }
-
-                    if (currentChar == ';') {
-                        advance();
-                        return new Token(TokenType.SEMICOLON, ";");
-                    }
-
-                    if (currentChar == '(') {
-                        advance();
-                        return new Token(TokenType.LPAREN, "(");
-                    }
-
-                    if (currentChar == ')') {
-                        advance();
-                        return new Token(TokenType.RPAREN, ")");
-                    }
-
-                    if (currentChar == '{') {
-                        advance();
-                        return new Token(TokenType.LBRACE, "{");
-                    }
-
-                    if (currentChar == '}') {
-                        advance();
-                        return new Token(TokenType.RBRACE, "}");
-                    }
-
-                    error();
-                }
-
-                return new Token(TokenType.EOF, null);
-            }
-        }
-        //parser-model
-        class AST {
-            // Base class for AST nodes
-        }
-
-        class AssignNode extends AST {
-            String variableName;
-            String value;
-
-            AssignNode(String variableName, String value) {
-                this.variableName = variableName;
-                this.value = value;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+                System.exit(1); // Exit the program on error
             }
         }
 
-        class ForNode extends AST {
-            String variableName;
-            int start;
-            int end;
-            List<AST> body;
-
-            ForNode(String variableName, int start, int end, List<AST> body) {
-                this.variableName = variableName;
-                this.start = start;
-                this.end = end;
-                this.body = body;
-            }
-        }
+        scanner.close();
     }
 }
