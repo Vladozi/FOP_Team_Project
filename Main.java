@@ -54,23 +54,30 @@ public class Main {
                     String varName = parts[0].trim();
                     String value = parts[1].trim();
 
-                    interpreter.assignVariable(varName, value);
-                    continue;
-                }
-
-                // Addition
-                if (input.contains("+")) {
-                    String[] parts = input.split("\\+");
-                    if (parts.length != 2) {
-                        throwError("Invalid addition expression.");
+                    // Validate variable name
+                    if (!varName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+                        throwError("Invalid variable name.");
                     }
 
-                    String left = interpreter.getValue(parts[0].trim());
-                    String right = interpreter.getValue(parts[1].trim());
+                    // Check for arithmetic operations
+                    if (value.contains("+")) {
+                        String[] operands = value.split("\\+");
+                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) + Integer.parseInt(interpreter.getValue(operands[1].trim())));
+                    } else if (value.contains("-")) {
+                        String[] operands = value.split("-");
+                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) - Integer.parseInt(interpreter.getValue(operands[1].trim())));
+                    } else if (value.contains("*")) {
+                        String[] operands = value.split("\\*");
+                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) * Integer.parseInt(interpreter.getValue(operands[1].trim())));
+                    } else if (value.contains("/")) {
+                        String[] operands = value.split("/");
+                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) / Integer.parseInt(interpreter.getValue(operands[1].trim())));
+                    } else if (value.contains("%")) {
+                        String[] operands = value.split("%");
+                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) % Integer.parseInt(interpreter.getValue(operands[1].trim())));
+                    }
 
-                    // Perform addition but don't print directly
-                    String result = interpreter.addValues(left, right);
-                    interpreter.assignVariable("result", result); // Store the result for printing
+                    interpreter.assignVariable(varName, value);
                     continue;
                 }
 
@@ -143,18 +150,6 @@ public class Main {
 
         throwError("Invalid value.");
         return null; // Unreachable, added for compiler
-    }
-
-    // Adds two values and returns the result instead of printing
-    String addValues(String left, String right) {
-        if (isInteger(left) && isInteger(right)) {
-            int num1 = Integer.parseInt(left);
-            int num2 = Integer.parseInt(right);
-            return String.valueOf(num1 + num2);  // Return the sum as a string
-        } else {
-            throwError("Addition only supports integers.");
-        }
-        return null; // Unreachable
     }
 
     // Checks if string is an integer
