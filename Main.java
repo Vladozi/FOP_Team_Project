@@ -20,12 +20,16 @@ public class Main {
 
     public static void main(String[] args) {
         Main interpreter = new Main();
+        interpreter.runInterpreter();
+    }
+
+    // Runs the interpreter logic
+    public void runInterpreter() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Simple Interpreter. Type 'exit' to quit.");
 
-        while (true) {
-            System.out.print("> ");
+        while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
 
             // Exit condition
@@ -37,52 +41,13 @@ public class Main {
             if (input.isEmpty()) continue;
 
             try {
-                // Print statement
                 if (input.startsWith("print(") && input.endsWith(")")) {
-                    String varName = input.substring(6, input.length() - 1).trim();
-                    interpreter.printVariable(varName);
-                    continue;
+                    handlePrint(input);
+                } else if (input.contains("=")) {
+                    handleAssignment(input);
+                } else {
+                    throwError("Invalid command.");
                 }
-
-                // Assignment
-                if (input.contains("=")) {
-                    String[] parts = input.split("=");
-                    if (parts.length != 2) {
-                        throwError("Invalid assignment.");
-                    }
-
-                    String varName = parts[0].trim();
-                    String value = parts[1].trim();
-
-                    // Validate variable name
-                    if (!varName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-                        throwError("Invalid variable name.");
-                    }
-
-                    // Check for arithmetic operations
-                    if (value.contains("+")) {
-                        String[] operands = value.split("\\+");
-                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) + Integer.parseInt(interpreter.getValue(operands[1].trim())));
-                    } else if (value.contains("-")) {
-                        String[] operands = value.split("-");
-                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) - Integer.parseInt(interpreter.getValue(operands[1].trim())));
-                    } else if (value.contains("*")) {
-                        String[] operands = value.split("\\*");
-                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) * Integer.parseInt(interpreter.getValue(operands[1].trim())));
-                    } else if (value.contains("/")) {
-                        String[] operands = value.split("/");
-                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) / Integer.parseInt(interpreter.getValue(operands[1].trim())));
-                    } else if (value.contains("%")) {
-                        String[] operands = value.split("%");
-                        value = String.valueOf(Integer.parseInt(interpreter.getValue(operands[0].trim())) % Integer.parseInt(interpreter.getValue(operands[1].trim())));
-                    }
-
-                    interpreter.assignVariable(varName, value);
-                    continue;
-                }
-
-                // Invalid input
-                throwError("Invalid command.");
 
             } catch (Exception e) {
                 throwError(e.getMessage());
@@ -90,6 +55,31 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    // Handles the print command
+    private void handlePrint(String input) {
+        String varName = input.substring(6, input.length() - 1).trim();
+        printVariable(varName);
+    }
+
+    // Handles assignment command
+    private void handleAssignment(String input) {
+        String[] parts = input.split("=");
+        if (parts.length != 2) {
+            throwError("Invalid assignment.");
+        }
+
+        String varName = parts[0].trim();
+        String value = parts[1].trim();
+
+        // Validate variable name
+        if (!varName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throwError("Invalid variable name.");
+        }
+
+        // Handle simple integer or string assignment
+        assignVariable(varName, value);
     }
 
     // Assigns a variable
