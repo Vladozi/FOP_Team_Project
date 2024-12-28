@@ -1,160 +1,184 @@
-package FOP_Team_Project;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
-
 public class Main {
-    // Node class to store variable name and value
-    static class VariableNode {
-        String name;
-        String value;
-        VariableNode next;
 
-        VariableNode(String name, String value) {
-            this.name = name;
-            this.value = value;
-            this.next = null;
-        }
-    }
-
-    VariableNode head = null; // Head of the linked list
-
+    // A map to store variables and their values
+    private static final Map<String, Object> variables = new HashMap<>();
     public static void main(String[] args) {
-        Main interpreter = new Main();
-        interpreter.runInterpreter();
-    }
-
-    // Runs the interpreter logic
-    public void runInterpreter() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Simple Interpreter. Type 'exit' to quit.");
+        System.out.println("Basic Python Interpreter");
+        System.out.println("Supports variable assignment, print, and basic arithmetic operations (+, -, *, /).");
+        System.out.println("Type 'exit' to quit.");
 
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
+        while (true) {
+            System.out.print(">>> ");
+            String input = scanner.nextLine();
 
-            // Exit condition
-            if (input.equalsIgnoreCase("exit")) {
+            if (input.equals("exit")) {
                 break;
             }
 
-            // Skip empty input
-            if (input.isEmpty()) continue;
-
             try {
-                if (input.startsWith("print(") && input.endsWith(")")) {
-                    handlePrint(input);
-                } else if (input.contains("=")) {
-                    handleAssignment(input);
-                } else {
-                    throwError("Invalid command.");
-                }
-
+                interpret(input);
             } catch (Exception e) {
-                throwError(e.getMessage());
+                System.out.println("Error: " + e.getMessage());
             }
         }
 
         scanner.close();
     }
 
-    // Handles the print command
-    private void handlePrint(String input) {
-        String varName = input.substring(6, input.length() - 1).trim();
-        printVariable(varName);
+    // Interpret a single line of input
+    private static void interpret(String input) throws Exception {
+        input = input.trim();
+
+        // Check for variable assignment (e.g., x = 10 or z = x + y)
+        if (input.contains("=")) {
+            handleAssignment(input);
+        }
+        // Check for print statements (e.g., print(x), print("Hello"), or print(x + y))
+        else if (input.startsWith("print(") && input.endsWith(")")) {
+            handlePrint(input);
+        }
+        // Check for standalone arithmetic expressions (e.g., x + y)
+        else {
+            handleArithmetic(input, false);
+        }
     }
 
-    // Handles assignment command
-    private void handleAssignment(String input) {
-        String[] parts = input.split("=");
+    // Handle variable assignment
+    private static void handleAssignment(String input) throws Exception {
+        String[] parts = input.split("=", 2);
+
         if (parts.length != 2) {
-            throwError("Invalid assignment.");
+            throw new Exception("Invalid assignment syntax");
         }
 
-        String varName = parts[0].trim();
-        String value = parts[1].trim();
+        String variableName = parts[0].trim();
+        String valueExpression = parts[1].trim();
 
-        // Validate variable name
-        if (!varName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-            throwError("Invalid variable name.");
+        // Check if the value is a string literal
+        if (valueExpression.startsWith("\"") && valueExpression.endsWith("\"")) {
+            variables.put(variableName, valueExpression.substring(1, valueExpression.length() - 1)); // Store as string
+        } else {
+            // Evaluate the right-hand side (could be a literal, variable, or arithmetic expression)
+            Object value = evaluateExpression(valueExpression);
+            variables.put(variableName, value); // Store the result as either a string or number
         }
-
-        // Handle simple integer or string assignment
-        assignVariable(varName, value);
     }
 
-    // Assigns a variable
-    void assignVariable(String varName, String value) {
-        // Enforce integer or strings with double quotes
-        if (!isInteger(value) && !(value.startsWith("\"") && value.endsWith("\""))) {
-            throwError("Only integers or strings in double quotes are allowed.");
-        }
+    // Handle print statements
+    private static void handlePrint(String input) throws Exception {
+        String content = input.substring(6, input.length() - 1).trim(); // Extract content inside print()
 
-        VariableNode current = head;
-        while (current != null) {
-            if (current.name.equals(varName)) {
-                current.value = value; // Update existing variable
-                return;
+        // Evaluate the expression (could be a string or number)
+        Object result = evaluateExpression(content);
+
+        // Check if the result is a whole number and print it as an integer if possible
+        if (result instanceof Double) {
+            Double doubleResult = (Double) result;
+            if (doubleResult == doubleResult.intValue()) {
+                // Print as integer if no decimal part
+                System.out.println(doubleResult.intValue());
+            } else {
+                System.out.println(doubleResult);
             }
-            current = current.next;
+        } else {
+            System.out.println(result); // Print as is for other values
         }
-
-        // Add new variable
-        VariableNode newNode = new VariableNode(varName, value);
-        newNode.next = head;
-        head = newNode;
     }
 
-    // Prints variable value
-    void printVariable(String varName) {
-        VariableNode current = head;
-        while (current != null) {
-            if (current.name.equals(varName)) {
-                System.out.println(current.value);
-                return;
+    // Evaluate an expression (could be numeric or string)
+    private static Object evaluateExpression(String input) throws Exception {
+        if (variables.containsKey(input)) {
+            return variables.get(input); // Return the stored variable value
+        } else if (isNumeric(input)) {
+            return Double.parseDouble(input); // Return number if it's a literal number
+        } else if (input.startsWith("\"") && input.endsWith("\"")) {
+            return input.substring(1, input.length() - 1); // Return the string literal
+        } else {
+            // It's an arithmetic or concatenation expression
+            return handleArithmetic(input, true);
+        }
+    }
+
+    // Handle arithmetic operations (e.g., x + y - z or string concatenation)
+    private static Object handleArithmetic(String input, boolean evaluate) throws Exception {
+        // Remove extra spaces and split by operator (+, -, *, /)
+        String[] tokens = input.split("(?=[-+*/])|(?<=[-+*/])");
+
+        // If the expression is a single token (no operator), evaluate directly
+        if (tokens.length == 1) {
+            return evaluateExpression(tokens[0].trim());
+        }
+
+        // Process the expression, handle addition as string concatenation or numeric addition
+        String currentOperator = "+";
+        Object result = evaluateExpression(tokens[0].trim()); // Start with the first operand
+
+        for (int i = 1; i < tokens.length; i++) {
+            String token = tokens[i].trim();
+            if (isOperator(token)) {
+                currentOperator = token;  // Update operator
+            } else {
+                Object operand = evaluateExpression(token);  // Evaluate the next operand
+
+                if (result instanceof String && operand instanceof String) {
+                    // String concatenation
+                    if (currentOperator.equals("+")) {
+                        result = (String) result + (String) operand;
+                    } else {
+                        throw new Exception("Invalid operation between strings: " + currentOperator);
+                    }
+                } else if (result instanceof String && operand instanceof Number && currentOperator.equals("+")) {
+                    // String and Number concatenation
+                    result = (String) result + operand.toString();
+                } else if (result instanceof Number && operand instanceof Number) {
+                    // Numeric operation
+                    double num1 = ((Number) result).doubleValue();
+                    double num2 = ((Number) operand).doubleValue();
+
+                    switch (currentOperator) {
+                        case "+" -> result = num1 + num2;
+                        case "-" -> result = num1 - num2;
+                        case "*" -> result = num1 * num2;
+                        case "/" -> {
+                            if (num2 == 0) throw new Exception("Division by zero is not allowed");
+                            result = num1 / num2;
+                        }
+                        default -> throw new Exception("Unknown operator: " + currentOperator);
+                    }
+                } else {
+                    throw new Exception("Invalid operation between types: " + result.getClass() + " and " + operand.getClass());
+                }
             }
-            current = current.next;
         }
-        throwError("Variable not defined.");
+
+        return result;
     }
 
-    // Evaluates and returns a value
-    String getValue(String token) {
-        // Check if token is a variable
-        VariableNode current = head;
-        while (current != null) {
-            if (current.name.equals(token)) {
-                return current.value;
-            }
-            current = current.next;
-        }
-
-        // Check if it's an integer
-        if (isInteger(token)) {
-            return token;
-        }
-
-        // Check if it's a string
-        if (token.startsWith("\"") && token.endsWith("\"")) {
-            return token.substring(1, token.length() - 1); // Remove quotes
-        }
-
-        throwError("Invalid value.");
-        return null; // Unreachable, added for compiler
-    }
-
-    // Checks if string is an integer
-    boolean isInteger(String value) {
+    // Check if the token is a number (including decimals)
+    private static boolean isNumeric(String str) {
         try {
-            Integer.parseInt(value);
+            Double.parseDouble(str); // Try to parse as a number
             return true;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
-    // Throws an error and exits the program
-    static void throwError(String message) {
-        System.out.println("Error: " + message);
-        System.exit(1); // Close program on error
+    // Check if the token is an operator
+    private static boolean isOperator(String token) {
+        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
     }
 }
+
+
+
+
+
+
+
+
