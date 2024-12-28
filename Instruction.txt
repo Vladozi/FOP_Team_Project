@@ -5,3 +5,8 @@ sum = 10 (Output is 55)
 factorial = 5 (Output is 120)
 3.GCD algorithm
 gcd = 12, 6 (Output is 6)
+4. ReverseNumber algorithm
+reverse = 12 (Output is 21)
+5. PrimeNumber algorithm
+isPrime = 13 (True), isPrime = 12 (False)
+6.
