@@ -9,6 +9,7 @@ public class Main {
     GCD gcdInstance = new GCD(); // Added GCD instance
     ReverseNumber reverseNumberInstance = new ReverseNumber(); // Added ReverseNumber instance
     PrimeNumber primeNumberInstance = new PrimeNumber(); // Added PrimeNumber instance
+    PalindromeNumber palindromeNumberInstance = new PalindromeNumber(); // Added PalindromeNumber instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -109,6 +110,16 @@ public class Main {
                     int number = Integer.parseInt(numberStr);
                     boolean result = interpreter.primeNumberInstance.isPrime(number);
                     System.out.println("Is Prime: " + result);
+                    continue;
+                }
+
+                // Handle Palindrome Number check
+                if (line.startsWith("isPalindrome =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    boolean result = interpreter.palindromeNumberInstance.isPalindrome(number);
+                    System.out.println("Is Palindrome: " + result);
                     continue;
                 }
 
