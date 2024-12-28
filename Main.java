@@ -6,6 +6,7 @@ public class Main {
 
     Sum sumInstance = new Sum();
     Factorial factorialInstance = new Factorial(); // Added Factorial instance
+    GCD gcdInstance = new GCD(); // Added GCD instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -71,6 +72,21 @@ public class Main {
                 if (line.startsWith("factorial =")) {
                     Factorial factorialInstance = new Factorial();
                     factorialInstance.calculateFactorial(line);
+                    continue;
+                }
+
+                // Handle GCD calculation
+                if (line.startsWith("gcd =")) {
+                    String[] parts = line.split("=");
+                    String[] numbers = parts[1].trim().split(",");
+                    if (numbers.length == 2) {
+                        int a = Integer.parseInt(numbers[0].trim());
+                        int b = Integer.parseInt(numbers[1].trim());
+                        int result = interpreter.gcdInstance.calculateGCD(a, b);
+                        System.out.println("GCD: " + result);
+                    } else {
+                        throwError("Invalid GCD input. Provide two numbers.");
+                    }
                     continue;
                 }
 
