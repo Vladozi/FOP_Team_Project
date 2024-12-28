@@ -10,6 +10,7 @@ public class Main {
     ReverseNumber reverseNumberInstance = new ReverseNumber(); // Added ReverseNumber instance
     PrimeNumber primeNumberInstance = new PrimeNumber(); // Added PrimeNumber instance
     PalindromeNumber palindromeNumberInstance = new PalindromeNumber(); // Added PalindromeNumber instance
+    LargestDigit largestDigitInstance = new LargestDigit(); // Added LargestDigit instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -120,6 +121,16 @@ public class Main {
                     int number = Integer.parseInt(numberStr);
                     boolean result = interpreter.palindromeNumberInstance.isPalindrome(number);
                     System.out.println("Is Palindrome: " + result);
+                    continue;
+                }
+
+                // Handle Largest Digit calculation
+                if (line.startsWith("largestDigit =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    int largestDigit = interpreter.largestDigitInstance.findLargestDigit(number);
+                    System.out.println("Largest Digit: " + largestDigit);
                     continue;
                 }
 
