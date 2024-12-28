@@ -13,6 +13,7 @@ public class Main {
     LargestDigit largestDigitInstance = new LargestDigit();
     SumOfDigits sumOfDigitsInstance = new SumOfDigits();
     MultiplicationTable multiplicationTableInstance = new MultiplicationTable(); // Added MultiplicationTable instance
+    Fibonacci fibonacciInstance = new Fibonacci();  // Added Fibonacci instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true;
@@ -47,6 +48,16 @@ public class Main {
                 while (!indentStack.isEmpty() && indentStack.peek() > indentLevel) {
                     indentStack.pop();
                     interpreter.executeCurrentBlock = executionStack.pop();
+                }
+
+                // Handle Fibonacci calculation
+                if (line.startsWith("fibonacci =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    int fibonacciResult = interpreter.fibonacciInstance.calculateFibonacci(number);
+                    System.out.println("Fibonacci of " + number + " is: " + fibonacciResult);
+                    continue;
                 }
 
                 // Handle IF statement
