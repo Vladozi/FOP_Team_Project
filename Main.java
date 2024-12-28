@@ -5,16 +5,17 @@ import java.util.*;
 public class Main {
 
     Sum sumInstance = new Sum();
-    Factorial factorialInstance = new Factorial(); // Added Factorial instance
-    GCD gcdInstance = new GCD(); // Added GCD instance
-    ReverseNumber reverseNumberInstance = new ReverseNumber(); // Added ReverseNumber instance
-    PrimeNumber primeNumberInstance = new PrimeNumber(); // Added PrimeNumber instance
-    PalindromeNumber palindromeNumberInstance = new PalindromeNumber(); // Added PalindromeNumber instance
-    LargestDigit largestDigitInstance = new LargestDigit(); // Added LargestDigit instance
-    SumOfDigits sumOfDigitsInstance = new SumOfDigits(); // Added SumOfDigits instance
+    Factorial factorialInstance = new Factorial();
+    GCD gcdInstance = new GCD();
+    ReverseNumber reverseNumberInstance = new ReverseNumber();
+    PrimeNumber primeNumberInstance = new PrimeNumber();
+    PalindromeNumber palindromeNumberInstance = new PalindromeNumber();
+    LargestDigit largestDigitInstance = new LargestDigit();
+    SumOfDigits sumOfDigitsInstance = new SumOfDigits();
+    MultiplicationTable multiplicationTableInstance = new MultiplicationTable(); // Added MultiplicationTable instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
-    boolean executeCurrentBlock = true; // Control flow for block execution
+    boolean executeCurrentBlock = true;
 
     public static void main(String[] args) {
         Main interpreter = new Main();
@@ -136,12 +137,21 @@ public class Main {
                 }
 
                 // Handle Sum of Digits calculation
-                if (line.startsWith("sumDigits =")) {
+                if (line.startsWith("sumOfDigits =")) {
                     String[] parts = line.split("=");
                     String numberStr = parts[1].trim();
                     int number = Integer.parseInt(numberStr);
                     int sum = interpreter.sumOfDigitsInstance.sumOfDigits(number);
                     System.out.println("Sum of Digits: " + sum);
+                    continue;
+                }
+
+                // Handle Multiplication Table calculation
+                if (line.startsWith("multiTable =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    interpreter.multiplicationTableInstance.printTable(number);
                     continue;
                 }
 
