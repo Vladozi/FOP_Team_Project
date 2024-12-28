@@ -9,4 +9,6 @@ gcd = 12, 6 (Output is 6)
 reverse = 12 (Output is 21)
 5. PrimeNumber algorithm
 isPrime = 13 (True), isPrime = 12 (False)
-6.
+6.PalindromeNumber algorithm
+isPalindrome = 12 (False) isPalindrome = 121 (True)
+7.
