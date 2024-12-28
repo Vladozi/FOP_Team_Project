@@ -11,6 +11,7 @@ public class Main {
     PrimeNumber primeNumberInstance = new PrimeNumber(); // Added PrimeNumber instance
     PalindromeNumber palindromeNumberInstance = new PalindromeNumber(); // Added PalindromeNumber instance
     LargestDigit largestDigitInstance = new LargestDigit(); // Added LargestDigit instance
+    SumOfDigits sumOfDigitsInstance = new SumOfDigits(); // Added SumOfDigits instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -131,6 +132,16 @@ public class Main {
                     int number = Integer.parseInt(numberStr);
                     int largestDigit = interpreter.largestDigitInstance.findLargestDigit(number);
                     System.out.println("Largest Digit: " + largestDigit);
+                    continue;
+                }
+
+                // Handle Sum of Digits calculation
+                if (line.startsWith("sumDigits =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    int sum = interpreter.sumOfDigitsInstance.sumOfDigits(number);
+                    System.out.println("Sum of Digits: " + sum);
                     continue;
                 }
 
