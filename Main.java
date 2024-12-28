@@ -1,10 +1,11 @@
 package FOP_Team_Project;
-import FOP_Team_Project.Sum;
+
 import java.util.*;
 
 public class Main {
 
-    // Instance variables for managing variable names and values
+    Sum sumInstance = new Sum();
+    Factorial factorialInstance = new Factorial(); // Added Factorial instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -41,26 +42,35 @@ public class Main {
                     interpreter.executeCurrentBlock = executionStack.pop();
                 }
 
-                // Handle different statements
+                // Handle IF statement
                 if (line.startsWith("if ") && line.endsWith(":")) {
                     interpreter.handleIfStatement(line, indentLevel, executionStack, indentStack);
                     continue;
                 }
 
+                // Handle ELSE statement
                 if (line.startsWith("else:")) {
                     interpreter.handleElseStatement(executionStack, indentStack, indentLevel);
                     continue;
                 }
 
+                // Handle WHILE statement
                 if (line.startsWith("while ") && line.endsWith(":")) {
                     interpreter.handleWhileStatement(line, indentLevel, executionStack, indentStack, scanner);
                     continue;
                 }
 
-                // Handle sum calculation (e.g., "sum = 10")
+                // Handle sum calculation
                 if (line.startsWith("sum =")) {
                     Sum sumInstance = new Sum();
                     sumInstance.sumOfFirstNNumbers(line);
+                    continue;
+                }
+
+                // Handle factorial calculation
+                if (line.startsWith("factorial =")) {
+                    Factorial factorialInstance = new Factorial();
+                    factorialInstance.calculateFactorial(line);
                     continue;
                 }
 
@@ -89,12 +99,11 @@ public class Main {
         scanner.close();
     }
 
-    // Handle the IF statement logic
+    // Handle IF statement logic
     void handleIfStatement(String line, int indentLevel, Stack<Boolean> executionStack, Stack<Integer> indentStack) {
-        String condition = line.substring(3, line.length() - 1).trim(); // Remove 'if ' and ':'
+        String condition = line.substring(3, line.length() - 1).trim();
         boolean conditionResult = evaluateCondition(condition);
 
-        // Push block state
         executionStack.push(executeCurrentBlock);
         executeCurrentBlock = executeCurrentBlock && conditionResult;
         indentStack.push(indentLevel);
@@ -107,29 +116,24 @@ public class Main {
         }
 
         boolean previousState = executionStack.pop();
-        executionStack.push(previousState); // Push it back
+        executionStack.push(previousState);
 
-        // Execute ELSE only if previous IF failed
         executeCurrentBlock = !previousState && executeCurrentBlock;
         indentStack.push(indentLevel);
     }
 
     // Handle WHILE statement logic
     void handleWhileStatement(String line, int indentLevel, Stack<Boolean> executionStack, Stack<Integer> indentStack, Scanner scanner) {
-        String condition = line.substring(6, line.length() - 1).trim(); // Remove 'while ' and ':'
+        String condition = line.substring(6, line.length() - 1).trim();
 
-        // Push block state for while loop
         executionStack.push(executeCurrentBlock);
         boolean conditionResult = evaluateCondition(condition);
 
         while (conditionResult && executeCurrentBlock) {
-            // Read the next line of input
             String nextLine = scanner.nextLine();
             int nextIndentLevel = nextLine.length() - nextLine.stripLeading().length();
 
-            // Check for indentation to ensure it's part of the while block
             if (nextIndentLevel > indentLevel) {
-                // Execute the line inside the loop
                 if (nextLine.startsWith("print(") && nextLine.endsWith(")")) {
                     String varName = nextLine.substring(6, nextLine.length() - 1).trim();
                     printVariable(varName);
@@ -139,16 +143,13 @@ public class Main {
                     throwError("Invalid command inside while loop.");
                 }
             } else {
-                // Break the loop if indentation level is not correct
                 break;
             }
 
-            // Re-evaluate the condition inside the loop
             conditionResult = evaluateCondition(condition);
         }
     }
 
-    // Evaluate condition for loops and if statements
     boolean evaluateCondition(String condition) {
         String[] parts;
         if (condition.contains("==")) {
@@ -171,7 +172,6 @@ public class Main {
         return false;
     }
 
-    // Handle assignment of variables
     void handleAssignment(String line) {
         String[] parts = line.split("=");
         if (parts.length != 2) {
@@ -184,7 +184,6 @@ public class Main {
         assignVariable(varName, value);
     }
 
-    // Static method to assign values to variables
     static void assignVariable(String varName, String value) {
         if (!isInteger(value) && !(value.startsWith("\"") && value.endsWith("\""))) {
             throwError("Only integers or strings in double quotes are allowed.");
