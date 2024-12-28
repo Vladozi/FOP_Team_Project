@@ -11,4 +11,5 @@ reverse = 12 (Output is 21)
 isPrime = 13 (True), isPrime = 12 (False)
 6.PalindromeNumber algorithm
 isPalindrome = 12 (False) isPalindrome = 121 (True)
-7.
+7.Largest digit algorithm
+largestDigit = 1235 (Output is 5)
