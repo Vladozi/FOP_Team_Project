@@ -13,3 +13,5 @@ isPrime = 13 (True), isPrime = 12 (False)
 isPalindrome = 12 (False) isPalindrome = 121 (True)
 7.Largest digit algorithm
 largestDigit = 1235 (Output is 5)
+8. Sum of digits algorithm
+sumDigits = 145 (Output is 10)
