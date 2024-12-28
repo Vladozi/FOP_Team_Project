@@ -1,0 +1,7 @@
+Few instructions how to use code properly.
+1.Sum algorithm
+sum = 10 (Output is 55)
+2.Factorial algorithm 
+factorial = 5 (Output is 120)
+3.GCD algorithm
+gcd = 12, 6 (Output is 6)
