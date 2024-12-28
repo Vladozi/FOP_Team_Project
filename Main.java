@@ -7,6 +7,7 @@ public class Main {
     Sum sumInstance = new Sum();
     Factorial factorialInstance = new Factorial(); // Added Factorial instance
     GCD gcdInstance = new GCD(); // Added GCD instance
+    ReverseNumber reverseNumberInstance = new ReverseNumber(); // Added ReverseNumber instance
     static List<String> variableNames = new ArrayList<>();
     static List<String> variableValues = new ArrayList<>();
     boolean executeCurrentBlock = true; // Control flow for block execution
@@ -87,6 +88,16 @@ public class Main {
                     } else {
                         throwError("Invalid GCD input. Provide two numbers.");
                     }
+                    continue;
+                }
+
+                // Handle Reverse Number calculation
+                if (line.startsWith("reverse =")) {
+                    String[] parts = line.split("=");
+                    String numberStr = parts[1].trim();
+                    int number = Integer.parseInt(numberStr);
+                    int reversedNumber = interpreter.reverseNumberInstance.reverse(number);
+                    System.out.println("Reversed Number: " + reversedNumber);
                     continue;
                 }
 
