@@ -74,6 +74,30 @@ public class Main {
                     continue;
                 }
 
+                // Handle Fibonacci calculation using fibonacci(x) syntax
+                if (line.startsWith("fibonacci(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from fibonacci(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "fibonacci");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Calculate the Fibonacci number
+                        int fibonacciResult = interpreter.fibonacciInstance.calculateFibonacci(number);
+
+                        // Print the result
+                        System.out.println("Fibonacci of " + number + " is: " + fibonacciResult);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for Fibonacci calculation.");
+                    }
+                    continue;
+                }
+
 
 
 
