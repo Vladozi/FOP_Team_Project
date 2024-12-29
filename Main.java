@@ -110,20 +110,39 @@ public class Main {
 
 
 
-                // Handle GCD calculation
-                if (line.startsWith("gcd =")) {
-                    String[] parts = line.split("=");
-                    String[] numbers = parts[1].trim().split(",");
+                // Handle GCD calculation using gcd(x, y) syntax
+                if (line.startsWith("gcd(") && line.endsWith(")")) {
+                    // Extract the arguments inside parentheses (e.g., from gcd(x, y), it will get "x, y")
+                    String arguments = extractArgumentAsString(line, "gcd");
+
+                    // Split arguments by comma (assuming two arguments for GCD)
+                    String[] numbers = arguments.split(",");
+
                     if (numbers.length == 2) {
-                        int a = Integer.parseInt(numbers[0].trim());
-                        int b = Integer.parseInt(numbers[1].trim());
-                        int result = interpreter.gcdInstance.calculateGCD(a, b);
-                        System.out.println("GCD: " + result);
+                        // Retrieve values of x and y
+                        String valueX = getValue(numbers[0].trim());
+                        String valueY = getValue(numbers[1].trim());
+
+                        try {
+                            // Parse both values as integers
+                            int a = Integer.parseInt(valueX);
+                            int b = Integer.parseInt(valueY);
+
+                            // Call the calculateGCD method and get the result
+                            int gcdResult = interpreter.gcdInstance.calculateGCD(a, b);
+
+                            // Print the result
+                            System.out.println("GCD of " + a + " and " + b + " is: " + gcdResult);
+
+                        } catch (NumberFormatException e) {
+                            throwError("Invalid number for GCD calculation.");
+                        }
                     } else {
                         throwError("Invalid GCD input. Provide two numbers.");
                     }
                     continue;
                 }
+
 
                 // Handle Reverse Number calculation
                 if (line.startsWith("reverse =")) {
