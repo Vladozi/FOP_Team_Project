@@ -79,11 +79,16 @@ public class Main {
                 }
 
                 // Handle sum calculation
-                if (line.startsWith("sum =")) {
-                    Sum sumInstance = new Sum();
-                    sumInstance.sumOfFirstNNumbers(line);
+                // Extract argument as String for sum
+                if (line.startsWith("sum(")) {
+                    String argument = extractArgumentAsString(line, "sum");
+                    String value = interpreter.getValue(argument);
+                    int number = Integer.parseInt(value);
+                    interpreter.sumInstance.sumOfFirstNNumbers("sum = " + number);
                     continue;
                 }
+
+
 
                 // Handle factorial calculation
                 if (line.startsWith("factorial =")) {
@@ -190,6 +195,25 @@ public class Main {
 
         scanner.close();
     }
+    static int extractArgument(String line, String function) {
+        try {
+            String argument = line.substring(function.length() + 1, line.length() - 1).trim();
+            return Integer.parseInt(argument);
+        } catch (Exception e) {
+            throwError("Invalid argument for " + function + " function.");
+            return -1;
+        }
+    }
+    static String extractArgumentAsString(String line, String function) {
+        try {
+            return line.substring(function.length() + 1, line.length() - 1).trim();
+        } catch (Exception e) {
+            throwError("Invalid argument for " + function + " function.");
+            return "";
+        }
+    }
+
+
 
     // Handle IF statement logic
     void handleIfStatement(String line, int indentLevel, Stack<Boolean> executionStack, Stack<Integer> indentStack) {
