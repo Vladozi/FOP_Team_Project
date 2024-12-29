@@ -50,15 +50,33 @@ public class Main {
                     interpreter.executeCurrentBlock = executionStack.pop();
                 }
 
-                // Handle Fibonacci calculation
-                if (line.startsWith("fibonacci =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    int fibonacciResult = interpreter.fibonacciInstance.calculateFibonacci(number);
-                    System.out.println("Fibonacci of " + number + " is: " + fibonacciResult);
+                // Handle factorial calculation using factorial(x) syntax
+                if (line.startsWith("factorial(") && line.endsWith(")")) {
+                    // Extract argument inside parentheses (e.g., from factorial(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "factorial");
+
+                    // Check if the argument is a variable (e.g., x)
+                    String value = getValue(argument);
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Call the calculateFactorial method and get the result
+                        int factorialResult = interpreter.factorialInstance.calculateFactorial(number);
+
+                        // Print the result
+                        System.out.println("Factorial of " + number + " is: " + factorialResult);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for factorial.");
+                    }
                     continue;
                 }
+
+
+
+
 
                 // Handle IF statement
                 if (line.startsWith("if ") && line.endsWith(":")) {
@@ -90,12 +108,7 @@ public class Main {
 
 
 
-                // Handle factorial calculation
-                if (line.startsWith("factorial =")) {
-                    Factorial factorialInstance = new Factorial();
-                    factorialInstance.calculateFactorial(line);
-                    continue;
-                }
+
 
                 // Handle GCD calculation
                 if (line.startsWith("gcd =")) {
@@ -204,14 +217,17 @@ public class Main {
             return -1;
         }
     }
+    // Extract argument for factorial function
     static String extractArgumentAsString(String line, String function) {
         try {
+            // Extract the argument inside parentheses (e.g., from factorial(x), it will get "x")
             return line.substring(function.length() + 1, line.length() - 1).trim();
         } catch (Exception e) {
             throwError("Invalid argument for " + function + " function.");
             return "";
         }
     }
+
 
 
 
@@ -323,23 +339,27 @@ public class Main {
         }
     }
 
-    String getValue(String token) {
-        int index = variableNames.indexOf(token);
+    // Retrieve the value of a variable or directly return the number
+    static String getValue(String token) {
+        int index = variableNames.indexOf(token);  // Check if it's a variable
         if (index != -1) {
-            return variableValues.get(index);
+            return variableValues.get(index);  // Return the variable value
         }
 
+        // If it's not a variable, just return the token (assuming it's a number)
         if (isInteger(token)) {
-            return token;
+            return token;  // Return the number as a string
         }
 
+        // If it's a string, return it
         if (token.startsWith("\"") && token.endsWith("\"")) {
-            return token.substring(1, token.length() - 1);
+            return token.substring(1, token.length() - 1);  // Return the string without quotes
         }
 
         throwError("Invalid value.");
         return null;
     }
+
 
     static boolean isInteger(String value) {
         try {
