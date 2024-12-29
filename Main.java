@@ -435,16 +435,63 @@ public class Main {
     }
 
     void handleAssignment(String line) {
-        String[] parts = line.split("=");
+        String[] parts = line.split("=");  // Split by assignment operator
         if (parts.length != 2) {
             throwError("Invalid assignment.");
         }
 
-        String varName = parts[0].trim();
-        String value = parts[1].trim();
+        String varName = parts[0].trim();  // Variable name
+        String expression = parts[1].trim();  // The right-hand side expression
 
+        // Evaluate the expression if needed
+        String value = evaluateExpression(expression);
+
+        // Assign the evaluated value to the variable
         assignVariable(varName, value);
     }
+
+
+    String evaluateExpression(String expression) {
+        // Remove any spaces from the expression
+        expression = expression.replace(" ", "");
+
+        // Check for simple arithmetic operations
+        if (expression.contains("+")) {
+            String[] operands = expression.split("\\+");
+            int left = Integer.parseInt(getValue(operands[0].trim()));
+            int right = Integer.parseInt(getValue(operands[1].trim()));
+            return Integer.toString(left + right);
+        } else if (expression.contains("-")) {
+            String[] operands = expression.split("-");
+            int left = Integer.parseInt(getValue(operands[0].trim()));
+            int right = Integer.parseInt(getValue(operands[1].trim()));
+            return Integer.toString(left - right);
+        } else if (expression.contains("*")) {
+            String[] operands = expression.split("\\*");
+            int left = Integer.parseInt(getValue(operands[0].trim()));
+            int right = Integer.parseInt(getValue(operands[1].trim()));
+            return Integer.toString(left * right);
+        } else if (expression.contains("/")) {
+            String[] operands = expression.split("/");
+            int left = Integer.parseInt(getValue(operands[0].trim()));
+            int right = Integer.parseInt(getValue(operands[1].trim()));
+            if (right == 0) {
+                throwError("Division by zero.");
+            }
+            return Integer.toString(left / right);
+        } else if (expression.contains("%")) {
+            String[] operands = expression.split("%");
+            int left = Integer.parseInt(getValue(operands[0].trim()));
+            int right = Integer.parseInt(getValue(operands[1].trim()));
+            return Integer.toString(left % right);
+        }
+
+        // If no operators, just return the value (could be a variable or a number)
+        return getValue(expression);
+    }
+
+
+
 
     static void assignVariable(String varName, String value) {
         if (!isInteger(value) && !(value.startsWith("\"") && value.endsWith("\""))) {
@@ -463,7 +510,10 @@ public class Main {
     void printVariable(String varName) {
         int index = variableNames.indexOf(varName);
         if (index != -1) {
-            System.out.println(variableValues.get(index));
+            String value = variableValues.get(index);
+            // Evaluate if it's an expression
+            String evaluatedValue = evaluateExpression(value);
+            System.out.println(evaluatedValue);
         } else {
             throwError("Variable not defined.");
         }
