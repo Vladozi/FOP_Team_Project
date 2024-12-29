@@ -143,16 +143,30 @@ public class Main {
                     continue;
                 }
 
+// Handle Reverse Number calculation using reverse(x) syntax
+                if (line.startsWith("reverse(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from reverse(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "reverse");
 
-                // Handle Reverse Number calculation
-                if (line.startsWith("reverse =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    int reversedNumber = interpreter.reverseNumberInstance.reverse(number);
-                    System.out.println("Reversed Number: " + reversedNumber);
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Call the reverse function and get the reversed number
+                        int reversedNumber = interpreter.reverseNumberInstance.reverse(number);
+
+                        // Print the reversed number
+                        System.out.println("Reversed Number: " + reversedNumber);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for reverse calculation.");
+                    }
                     continue;
                 }
+
 
                 // Handle Prime Number check
                 if (line.startsWith("isPrime =")) {
