@@ -168,54 +168,127 @@ public class Main {
                 }
 
 
-                // Handle Prime Number check
-                if (line.startsWith("isPrime =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    boolean result = interpreter.primeNumberInstance.isPrime(number);
-                    System.out.println("Is Prime: " + result);
+                // Handle Prime Number check using isPrime(x) syntax
+                if (line.startsWith("isPrime(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from isPrime(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "isPrime");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Check if the number is prime
+                        boolean result = interpreter.primeNumberInstance.isPrime(number);
+
+                        // Print the result
+                        System.out.println("Is Prime: " + result);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for prime check.");
+                    }
                     continue;
                 }
 
-                // Handle Palindrome Number check
-                if (line.startsWith("isPalindrome =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    boolean result = interpreter.palindromeNumberInstance.isPalindrome(number);
-                    System.out.println("Is Palindrome: " + result);
+
+                // Handle Palindrome Number check using isPalindrome(x) syntax
+                if (line.startsWith("isPalindrome(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from isPalindrome(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "isPalindrome");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Check if the number is a palindrome
+                        boolean result = interpreter.palindromeNumberInstance.isPalindrome(number);
+
+                        // Print the result
+                        System.out.println("Is Palindrome: " + result);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for palindrome check.");
+                    }
                     continue;
                 }
 
-                // Handle Largest Digit calculation
-                if (line.startsWith("largestDigit =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    int largestDigit = interpreter.largestDigitInstance.findLargestDigit(number);
-                    System.out.println("Largest Digit: " + largestDigit);
+
+                // Handle Largest Digit calculation using largestDigit(x) syntax
+                if (line.startsWith("largestDigit(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from largestDigit(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "largestDigit");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Find the largest digit
+                        int largestDigit = interpreter.largestDigitInstance.findLargestDigit(number);
+
+                        // Print the result
+                        System.out.println("Largest Digit: " + largestDigit);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for largest digit calculation.");
+                    }
                     continue;
                 }
 
-                // Handle Sum of Digits calculation
-                if (line.startsWith("sumOfDigits =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    int sum = interpreter.sumOfDigitsInstance.sumOfDigits(number);
-                    System.out.println("Sum of Digits: " + sum);
+
+                // Handle Sum of Digits calculation using sumOfDigits(x) syntax
+                if (line.startsWith("sumDigits(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from sumOfDigits(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "sumDigits");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Calculate the sum of digits
+                        int sum = interpreter.sumOfDigitsInstance.sumOfDigits(number);
+
+                        // Print the result
+                        System.out.println("Sum of Digits: " + sum);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for sum of digits calculation.");
+                    }
                     continue;
                 }
 
-                // Handle Multiplication Table calculation
-                if (line.startsWith("multiTable =")) {
-                    String[] parts = line.split("=");
-                    String numberStr = parts[1].trim();
-                    int number = Integer.parseInt(numberStr);
-                    interpreter.multiplicationTableInstance.printTable(number);
+
+                // Handle Multiplication Table calculation using multiTable(x) syntax
+                if (line.startsWith("multiTable(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from multiTable(x), it will get "x")
+                    String argument = extractArgumentAsString(line, "multiTable");
+
+                    // Retrieve the value of the variable x
+                    String value = getValue(argument.trim());
+
+                    try {
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Print the multiplication table
+                        interpreter.multiplicationTableInstance.printTable(number);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for multiplication table.");
+                    }
                     continue;
                 }
+
 
                 // Skip lines in inactive block
                 if (!interpreter.executeCurrentBlock) {
