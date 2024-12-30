@@ -120,13 +120,27 @@ public class Main {
                     continue;
                 }
 
-                // Handle sum calculation
-                // Extract argument as String for sum
-                if (line.startsWith("sum(")) {
+                // Handle sum calculation using sum(x) syntax
+                if (line.startsWith("sum(") && line.endsWith(")")) {
+                    // Extract the argument inside parentheses (e.g., from sum(x), it will get "x")
                     String argument = extractArgumentAsString(line, "sum");
-                    String value = interpreter.getValue(argument);
-                    int number = Integer.parseInt(value);
-                    interpreter.sumInstance.sumOfFirstNNumbers("sum = " + number);
+
+                    try {
+                        // Retrieve the value of x
+                        String value = getValue(argument);
+
+                        // Parse the value as an integer
+                        int number = Integer.parseInt(value);
+
+                        // Call the sumOfFirstNNumbers method and calculate the sum
+                        int sumResult = interpreter.sumInstance.sumOfFirstNNumbers(number);
+
+                        // Print the result
+                        System.out.println("Sum of first " + number + " numbers is: " + sumResult);
+
+                    } catch (NumberFormatException e) {
+                        throwError("Invalid number for sum calculation.");
+                    }
                     continue;
                 }
 
