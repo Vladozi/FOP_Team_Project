@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Main {
 
+    //Creating instances so that it can work with input e.g sum(n) fibonacci(n) etc. (for instructions check Instruction.txt)
     Sum sumInstance = new Sum();
     Factorial factorialInstance = new Factorial();
     GCD gcdInstance = new GCD();
@@ -12,21 +13,22 @@ public class Main {
     PalindromeNumber palindromeNumberInstance = new PalindromeNumber();
     LargestDigit largestDigitInstance = new LargestDigit();
     SumOfDigits sumOfDigitsInstance = new SumOfDigits();
-    MultiplicationTable multiplicationTableInstance = new MultiplicationTable(); // Added MultiplicationTable instance
-    Fibonacci fibonacciInstance = new Fibonacci();  // Added Fibonacci instance
-    static List<String> variableNames = new ArrayList<>();
-    static List<String> variableValues = new ArrayList<>();
-    boolean executeCurrentBlock = true;
+    MultiplicationTable multiplicationTableInstance = new MultiplicationTable();
+    Fibonacci fibonacciInstance = new Fibonacci();
+    static List<String> variableNames = new ArrayList<>(); // Creating list for variable names (inputs)
+    static List<String> variableValues = new ArrayList<>(); // List for values (inputs)
+    boolean executeCurrentBlock = true; //if false then it means that program should stop working (case of errors)
 
     public static void main(String[] args) {
         Main interpreter = new Main();
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in); //scanner for input
 
-        System.out.println("Python-like Interpreter. Type 'exit' to quit.");
+        System.out.println("Welcome to Python interpreter. Type 'exit' to quit."); //Optionable message
 
-        Stack<Boolean> executionStack = new Stack<>();
-        Stack<Integer> indentStack = new Stack<>();
+        Stack<Boolean> executionStack = new Stack<>(); //Tracks execution.
+        Stack<Integer> indentStack = new Stack<>(); //Tracks indentation.
 
+        //This part checks for commands such as factorial(number), exit etc.
         while (scanner.hasNextLine()) {
             System.out.print("> ");
             String input = scanner.nextLine();
@@ -148,12 +150,12 @@ public class Main {
 
 
 
-                // Handle GCD calculation using gcd(x, y) syntax
+                // Handle GCD calculation also works with variables such as x
                 if (line.startsWith("gcd(") && line.endsWith(")")) {
-                    // Extract the arguments inside parentheses (e.g., from gcd(x, y), it will get "x, y")
+                    // Extract the arguments inside parentheses (e.g. from gcd(x, y) it will get "x, y")
                     String arguments = extractArgumentAsString(line, "gcd");
 
-                    // Split arguments by comma (assuming two arguments for GCD)
+                    // Split arguments by comma (two arguments for GCD)
                     String[] numbers = arguments.split(",");
 
                     if (numbers.length == 2) {
@@ -181,9 +183,9 @@ public class Main {
                     continue;
                 }
 
-// Handle Reverse Number calculation using reverse(x) syntax
+                // Handle Reverse Number calculation also works with some variable x too(as well as straightly numbers).
                 if (line.startsWith("reverse(") && line.endsWith(")")) {
-                    // Extract the argument inside parentheses (e.g., from reverse(x), it will get "x")
+                    // Extract the argument inside parentheses (e.g. from reverse(x) it will get "x")
                     String argument = extractArgumentAsString(line, "reverse");
 
                     // Retrieve the value of the variable x
@@ -206,7 +208,7 @@ public class Main {
                 }
 
 
-                // Handle Prime Number check using isPrime(x) syntax
+                // Handle Prime Number check
                 if (line.startsWith("isPrime(") && line.endsWith(")")) {
                     // Extract the argument inside parentheses (e.g., from isPrime(x), it will get "x")
                     String argument = extractArgumentAsString(line, "isPrime");
@@ -231,7 +233,7 @@ public class Main {
                 }
 
 
-                // Handle Palindrome Number check using isPalindrome(x) syntax
+                // Handle Palindrome Number check
                 if (line.startsWith("isPalindrome(") && line.endsWith(")")) {
                     // Extract the argument inside parentheses (e.g., from isPalindrome(x), it will get "x")
                     String argument = extractArgumentAsString(line, "isPalindrome");
@@ -256,7 +258,7 @@ public class Main {
                 }
 
 
-                // Handle Largest Digit calculation using largestDigit(x) syntax
+                // Handle Largest Digit calculation
                 if (line.startsWith("largestDigit(") && line.endsWith(")")) {
                     // Extract the argument inside parentheses (e.g., from largestDigit(x), it will get "x")
                     String argument = extractArgumentAsString(line, "largestDigit");
@@ -281,7 +283,7 @@ public class Main {
                 }
 
 
-                // Handle Sum of Digits calculation using sumOfDigits(x) syntax
+                // Handle Sum of Digits calculation
                 if (line.startsWith("sumDigits(") && line.endsWith(")")) {
                     // Extract the argument inside parentheses (e.g., from sumOfDigits(x), it will get "x")
                     String argument = extractArgumentAsString(line, "sumDigits");
@@ -306,7 +308,7 @@ public class Main {
                 }
 
 
-                // Handle Multiplication Table calculation using multiTable(x) syntax
+                // Handle Multiplication Table calculation
                 if (line.startsWith("multiTable(") && line.endsWith(")")) {
                     // Extract the argument inside parentheses (e.g., from multiTable(x), it will get "x")
                     String argument = extractArgumentAsString(line, "multiTable");
@@ -328,11 +330,12 @@ public class Main {
                 }
 
 
-                // Skip lines in inactive block
+                // Skip lines in inactive block for example if statements such as one case must be ignored.
                 if (!interpreter.executeCurrentBlock) {
                     continue;
                 }
 
+                // this contains print statement
                 if (line.startsWith("print(") && line.endsWith(")")) {
                     String varName = line.substring(6, line.length() - 1).trim();
                     interpreter.printVariable(varName);
@@ -344,14 +347,15 @@ public class Main {
                     continue;
                 }
 
-                throwError("Invalid command.");
+                throwError("Invalid command."); // if any of these does not work then it is invalid command
             } catch (Exception e) {
                 throwError(e.getMessage());
             }
         }
 
-        scanner.close();
+        scanner.close(); //program closes
     }
+    //This block of code checks if passes argument is valid for example x = a is incorrect for int
     static int extractArgument(String line, String function) {
         try {
             String argument = line.substring(function.length() + 1, line.length() - 1).trim();
@@ -361,10 +365,10 @@ public class Main {
             return -1;
         }
     }
-    // Extract argument for factorial function
+
     static String extractArgumentAsString(String line, String function) {
         try {
-            // Extract the argument inside parentheses (e.g., from factorial(x), it will get "x")
+            // Extract the argument inside parentheses (e.g. from factorial(x), it will get "x")
             return line.substring(function.length() + 1, line.length() - 1).trim();
         } catch (Exception e) {
             throwError("Invalid argument for " + function + " function.");
@@ -426,6 +430,7 @@ public class Main {
         }
     }
 
+    //This one is for conditiopns for example in if block if x == 20
     boolean evaluateCondition(String condition) {
         String[] parts;
         if (condition.contains("==")) {
@@ -448,6 +453,7 @@ public class Main {
         return false;
     }
 
+    //To parse, evaluate, and store variables and their values from an assignment command
     void handleAssignment(String line) {
         String[] parts = line.split("=");  // Split by assignment operator
         if (parts.length != 2) {
@@ -465,6 +471,7 @@ public class Main {
     }
 
 
+    //This code supports commands such as x = 10 + 2 or x = 10%3
     String evaluateExpression(String expression) {
         // Remove any spaces from the expression
         expression = expression.replace(" ", "");
@@ -507,6 +514,7 @@ public class Main {
 
 
 
+    //ensure only valid values (integers or strings) are assigned and to store or update variables and their values
     static void assignVariable(String varName, String value) {
         if (!isInteger(value) && !(value.startsWith("\"") && value.endsWith("\""))) {
             throwError("Only integers or strings in double quotes are allowed.");
@@ -521,6 +529,7 @@ public class Main {
         }
     }
 
+    //display the value of a specified variable
     void printVariable(String varName) {
         int index = variableNames.indexOf(varName);
         if (index != -1) {
