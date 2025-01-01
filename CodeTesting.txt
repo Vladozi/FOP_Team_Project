@@ -1,5 +1,5 @@
 Proof that algorithms work!
-1. sum of first N numbers:
+1. Sum of First N Numbers:
 input = 10
 sum = 0
 while input > 0:
@@ -7,4 +7,45 @@ while input > 0:
     input = input - 1
 print(sum)
 
-2.
+2.Factorial of N:
+input = 5
+factorial = 1
+while input > 0:
+    factorial = factorial * input
+    input = input - 1
+print(factorial)
+
+3.GCD of Two Numbers:
+a = 48
+b = 18
+while b > 0:
+    temp = b
+    b = a % b
+    a = temp
+print(a)
+4.Reverse a Number:
+number = 1234
+reversed = 0
+while number > 0:
+    digit = number % 10
+    reversed = reversed * 10 + digit
+    number = number / 10
+print(reversed)
+
+5.
+
+6. Check if a Number is Palindrome
+number = 121
+original = number
+reversed = 0
+
+while number > 0:
+    digit = number % 10
+    reversed = reversed * 10 + digit
+    number = number / 10
+
+if original == reversed:
+    print("True")
+else:
+    print("False")
+6.
