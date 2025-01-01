@@ -7,7 +7,6 @@ This is basic python interpreter written in java.which supports 1. arithmetic op
                                   step 4: congrats you successfuly installed interpreter in your computer and now execute python codes that are supported(listed above) 
                                   important!!!!:make sure you have insatalled jdk and IDE before cloning this project and CODE ON MAIN BRANCH IS ONE WHICH IS TO BE OPENED
 
-
-
+run with java Main.java < name.py
    Team members: 1.Murtaz Babunashvili
                   2.Lado Sitchinava
