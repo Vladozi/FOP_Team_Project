@@ -1,0 +1,10 @@
+Proof that algorithms work!
+1. sum of first N numbers:
+input = 10
+sum = 0
+while input > 0:
+    sum = sum + input
+    input = input - 1
+print(sum)
+
+2.
