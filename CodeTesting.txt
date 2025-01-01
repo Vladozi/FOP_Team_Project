@@ -32,7 +32,7 @@ while number > 0:
     number = number / 10
 print(reversed)
 
-5.
+5. ISSUE When if is written in While (nested) after if another code does not work (I dont know why)
 
 6. Check if a Number is Palindrome
 number = 121
@@ -49,7 +49,19 @@ if original == reversed:
 else:
     print("False")
 
-7.
+7.  ISSUE When if is written in While (nested) after if another code does not work (I dont know why)7
+n = 3947
+largest = 0
+
+while n > 0:
+    digit = n % 10
+    if digit > largest:
+        largest = digit
+    n = n / 10
+
+print(largest)
+
+outputs 3
 
 8.Sum of Digits
 n = 1234
